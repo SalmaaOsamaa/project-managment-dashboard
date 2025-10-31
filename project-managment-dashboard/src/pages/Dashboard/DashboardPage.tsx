@@ -38,13 +38,11 @@ import {
   type VisibilityState,
 } from "@tanstack/react-table"
 
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, ChevronDown, MoreHorizontal, AlertCircle, RefreshCw } from "lucide-react"
 import { Button } from '../../components/ui/button'
 import Input from "../../components/ui/input"
 import { useAllProducts } from "./useAllProducts"
 import type { Product } from "../../domain-models"
-import { useNavigate } from "react-router-dom"
-import ROUTES from "../../router/routes"
 import Skeleton from "../../components/ui/Skeleton"
 import { useAllCategories } from "./useAllCategories"
 
@@ -56,13 +54,8 @@ interface EditProductFormData {
   category: string;
 }
 const DashboardPage = () => {
-  const navigate = useNavigate()
-  const { productsList, isLoading, error, refetch, isSubmittingEditProduct, editProduct,successfullyEditedProduct, editProductLoadingError, pageIndex, pageSize, setPagination } = useAllProducts();
-  const { categoriesList, isLoading: isLoadingCategories } = useAllCategories();
-  
-  if (error) {
-    navigate(ROUTES.ERROR)
-  }
+  const { productsList, isLoading, error, refetch, isSubmittingEditProduct, editProduct,successfullyEditedProduct, pageIndex, pageSize, setPagination } = useAllProducts();
+  const { categoriesList, isLoading: isLoadingCategories, error: categoriesError, refetch: refetchCategories } = useAllCategories();
 
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -307,7 +300,7 @@ const DashboardPage = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex items-center py-4 gap-4">
         <Input
-          placeholder="Filter by title..."
+          placeholder="Search by product title ..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("title")?.setFilterValue(event.target.value)
@@ -324,6 +317,20 @@ const DashboardPage = () => {
           <div className="flex items-center gap-2 min-w-max px-2">
             {isLoadingCategories ? (
               <span className="text-muted-foreground text-sm">Loading categories...</span>
+            ) : categoriesError ? (
+              <div className="flex items-center gap-2 text-destructive">
+                <AlertCircle className="h-4 w-4" />
+                <span className="text-sm">Failed to load categories</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => refetchCategories()}
+                  className="h-6 px-2 text-xs"
+                >
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                  Retry
+                </Button>
+              </div>
             ) : categoriesList && categoriesList.length > 0 ? (
               categoriesList.map((category, index) => {
                 const isSelected = selectedCategory === category;
@@ -413,6 +420,31 @@ const DashboardPage = () => {
                   ))}
                 </TableRow>
               ))
+            ) : error ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-64 text-center"
+                >
+                  <div className="flex flex-col items-center justify-center gap-4 py-8">
+                    <AlertCircle className="h-12 w-12 text-destructive" />
+                    <div className="space-y-2">
+                      <p className="text-lg font-semibold text-foreground">Failed to load products</p>
+                      <p className="text-sm text-muted-foreground">
+                        {error instanceof Error ? error.message : 'An error occurred while loading the data'}
+                      </p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={() => refetch()}
+                      className="flex items-center gap-2"
+                    >
+                      <RefreshCw className="h-4 w-4" />
+                      Retry
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
