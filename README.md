@@ -5,8 +5,7 @@
 </div>
 
 ## Project Description
-
-This is a single-page application (SPA) that allows users to:
+here is a link to the project deployed on vercel <br/> <a href="https://project-managment-dashboard-1f4o.vercel.app/">Product-Dashboard</a> <br/>
 
 - **Authenticate** - Simple login system (any email/password combination works for demo purposes)
 - **View Products** - Browse products in a responsive, sortable table with pagination
