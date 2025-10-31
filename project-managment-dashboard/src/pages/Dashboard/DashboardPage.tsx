@@ -23,7 +23,6 @@ import {
   DialogHeader,
   DialogFooter,
   DialogTitle,
-  DialogDescription,
 } from '../../components/ui/Modal'
 import {
   type ColumnDef,
@@ -309,11 +308,7 @@ const DashboardPage = () => {
         />
         
         <div className="flex-1 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          <style>{`
-            div::-webkit-scrollbar {
-              display: none;
-            }
-          `}</style>
+      
           <div className="flex items-center gap-2 min-w-max px-2">
             {isLoadingCategories ? (
               <span className="text-muted-foreground text-sm">Loading categories...</span>
@@ -516,20 +511,19 @@ const DashboardPage = () => {
             }
           }}
         > 
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="h-[80vh] max-w-2xl max-h-[90vh] flex flex-col">
           <DialogHeader>
             <DialogTitle>Edit Product</DialogTitle>
-            <DialogDescription>Edit the product details</DialogDescription>
           </DialogHeader>
-          
           <form
             onSubmit={(e) => {
               e.preventDefault()
               handleEditProduct(formData)
               setIsOpen(false)
             }}
+            className="flex flex-col flex-1 min-h-0"
           >
-            <div className="grid gap-4 py-4 px-4">
+            <div className="grid gap-4 py-4 px-4 flex-1 overflow-y-auto">
               <div className="grid gap-2">
                 <label htmlFor="title" className="text-sm font-medium">
                   Title
