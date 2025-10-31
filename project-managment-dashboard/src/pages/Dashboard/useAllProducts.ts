@@ -9,6 +9,8 @@ interface State {
   isEditingProduct: boolean;
   successfullyEditedProduct: Product | null;
   editProductLoadingError: unknown;
+  pageIndex: number;
+  pageSize: number;
 }
 
 type Action =
@@ -34,6 +36,11 @@ type Action =
       type: "EDIT_PRODUCT_ERROR";
       editProductLoadingError: unknown;
     }
+  | {
+      type: "SET_PAGINATION";
+      pageIndex: number;
+      pageSize: number;
+    }
 type ActionHandlers = {
   [key in Action["type"]]: (
     state: State,
@@ -48,6 +55,8 @@ const initialState: State = {
   isEditingProduct: false,
   successfullyEditedProduct: null,
   editProductLoadingError: null,
+  pageIndex: 0,
+  pageSize: 5,
 };
 
 const actionHandlers: ActionHandlers = {
@@ -83,6 +92,11 @@ const actionHandlers: ActionHandlers = {
     isEditingProduct: false,
     editProductLoadingError: editProductLoadingError,
   }),
+  SET_PAGINATION: (state, { pageIndex, pageSize }) => ({
+    ...state,
+    pageIndex,
+    pageSize,
+  }),
 };
 
 function reducer(state: State = initialState, action: Action): State {
@@ -90,7 +104,7 @@ function reducer(state: State = initialState, action: Action): State {
 }
 
 const useAllProducts = () => {
-  const [{ isLoading, data, error, isEditingProduct, successfullyEditedProduct, editProductLoadingError }, dispatch] = useReducer(
+  const [{ isLoading, data, error, isEditingProduct, successfullyEditedProduct, editProductLoadingError, pageIndex, pageSize }, dispatch] = useReducer(
     reducer,
     initialState
   );
@@ -149,6 +163,10 @@ const useAllProducts = () => {
     };
   }, []);
 
+  const setPagination = useCallback((pageIndex: number, pageSize: number) => {
+    dispatch({ type: "SET_PAGINATION", pageIndex, pageSize });
+  }, []);
+
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
@@ -163,6 +181,9 @@ const useAllProducts = () => {
     isSubmittingEditProduct: isEditingProduct,
     successfullyEditedProduct: successfullyEditedProduct,
     editProductLoadingError: editProductLoadingError,
+    pageIndex,
+    pageSize,
+    setPagination,
   };
 };
 

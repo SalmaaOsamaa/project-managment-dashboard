@@ -6,6 +6,8 @@ import { TableBody } from "../../components/ui/TableBody"
 import { TableCell } from "../../components/ui/TableCell"
 import { TableHead } from "../../components/ui/TableHead"
 import { TableRow } from "../../components/ui/TableRow"
+import Navbar from "../../components/Navbar"
+import Header from "../../components/Header"
 
 import {
   DropdownMenu,
@@ -55,25 +57,18 @@ interface EditProductFormData {
 }
 const DashboardPage = () => {
   const navigate = useNavigate()
-  const { productsList, isLoading, error, refetch, isSubmittingEditProduct, editProduct,successfullyEditedProduct, editProductLoadingError } = useAllProducts();
+  const { productsList, isLoading, error, refetch, isSubmittingEditProduct, editProduct,successfullyEditedProduct, editProductLoadingError, pageIndex, pageSize, setPagination } = useAllProducts();
   const { categoriesList, isLoading: isLoadingCategories } = useAllCategories();
   
   if (error) {
     navigate(ROUTES.ERROR)
   }
 
-  React.useEffect(() => {
-    if (successfullyEditedProduct?.id) {
-      refetch();
-    }
-  }, [successfullyEditedProduct, refetch]);
-  
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
   
-  // Initialize column visibility from localStorage
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>(() => {
       try {
@@ -84,7 +79,12 @@ const DashboardPage = () => {
       }
     })
   
-  // Persist column visibility to localStorage whenever it changes
+  React.useEffect(() => {
+    if (successfullyEditedProduct?.id) {
+      refetch();
+    }
+  }, [successfullyEditedProduct, refetch]);
+  
   React.useEffect(() => {
     try {
       localStorage.setItem('dashboard-column-visibility', JSON.stringify(columnVisibility))
@@ -259,9 +259,17 @@ const DashboardPage = () => {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
-    pageCount: 5,
-    initialState:{
-      pagination:{
+    onPaginationChange: (updater) => {
+      const newPagination = typeof updater === 'function' 
+        ? updater({ pageIndex, pageSize })
+        : updater;
+      setPagination(newPagination.pageIndex, newPagination.pageSize);
+    },
+    manualPagination: false,
+    enableFilters: true,
+    autoResetPageIndex: true,
+    initialState: {
+      pagination: {
         pageIndex: 0,
         pageSize: 5,
       }
@@ -271,12 +279,14 @@ const DashboardPage = () => {
       columnFilters,
       columnVisibility,
       rowSelection,
+      pagination: {
+        pageIndex,
+        pageSize,
+      },
     },
   })
   
   const handleEditProduct = (formData: EditProductFormData) => {
-    console.log("formData", formData);
-    
     if (selectedProduct) {
       editProduct({
         product_id: selectedProduct.id.toString(),
@@ -288,8 +298,14 @@ const DashboardPage = () => {
     }
   }
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4 gap-4">
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <Header 
+        title="Products Management"
+        description="Manage and view all your products"
+      />
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex items-center py-4 gap-4">
         <Input
           placeholder="Filter by title..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
@@ -299,7 +315,6 @@ const DashboardPage = () => {
           className="max-w-sm"
         />
         
-        {/* Horizontal Category Carousel */}
         <div className="flex-1 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <style>{`
             div::-webkit-scrollbar {
@@ -322,11 +337,9 @@ const DashboardPage = () => {
                       }`}
                     onClick={() => {
                       if (isSelected) {
-                        // Deselect if clicking the same category
                         setSelectedCategory(null);
                         table.getColumn("category")?.setFilterValue(null);
                       } else {
-                        // Select new category
                         setSelectedCategory(category);
                         table.getColumn("category")?.setFilterValue(category);
                       }
@@ -452,6 +465,7 @@ const DashboardPage = () => {
             Next
           </Button>
         </div>
+      </div>
       </div>
      {
       isOpen && (

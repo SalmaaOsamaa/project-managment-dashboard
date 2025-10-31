@@ -19,8 +19,6 @@ const requestFetchAllCategories = async ({
       signal: options?.signal,
     });
   
-  console.log(data,"where is my data?");
-  
     return { data };
   };
   export { requestFetchAllCategories };

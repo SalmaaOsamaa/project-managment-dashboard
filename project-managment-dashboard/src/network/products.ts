@@ -16,11 +16,8 @@ const requestFetchAllProducts = async ({
     options,
   }: RequestFetchAllProductsArgs): Promise<RequestFetchAllProductsResult> => {
     const { data } = await instance.get<Product[]>(`/products`, {
-     
       signal: options?.signal,
     });
-  
-  console.log(data,"where is my data?");
   
     return { data };
   };
