@@ -1,2 +1,2 @@
-export type { default as Category } from "./Category";
+export type { Category } from "./Category";
 export type { default as Product } from "./Product";

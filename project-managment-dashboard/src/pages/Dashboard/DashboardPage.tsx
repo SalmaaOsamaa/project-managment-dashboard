@@ -56,7 +56,7 @@ interface EditProductFormData {
 const DashboardPage = () => {
   const navigate = useNavigate()
   const { productsList, isLoading, error, refetch, isSubmittingEditProduct, editProduct,successfullyEditedProduct, editProductLoadingError } = useAllProducts();
-  const { categoriesList, isLoadingCategories, errorCategories, refetchCategories } = useAllCategories();
+  const { categoriesList, isLoading: isLoadingCategories } = useAllCategories();
   
   if (error) {
     navigate(ROUTES.ERROR)
@@ -77,6 +77,7 @@ const DashboardPage = () => {
   const [rowSelection, setRowSelection] = React.useState({})
   const [isOpen, setIsOpen] = React.useState(false)
   const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null)
+  const [selectedCategory, setSelectedCategory] = React.useState<string | null>(null)
   const [formData, setFormData] = React.useState({
     title: "",
     price: "",
@@ -138,10 +139,9 @@ const DashboardPage = () => {
     },
     {
       accessorKey: "category",
-      header: ({ column }) => {
+      header: () => {
         return (
-          <div
-          >
+          <div>
             Category
           </div>
         )
@@ -150,6 +150,12 @@ const DashboardPage = () => {
         const category = row.getValue("category")
         const categoryStr = typeof category === "string" ? category : String(category)
         return <div className="capitalize">{categoryStr}</div>
+      },
+      filterFn: (row, columnId, filterValue: string | null) => {
+        if (!filterValue) return true;
+        const categoryValue = row.getValue(columnId);
+        const categoryStr = typeof categoryValue === "string" ? categoryValue : String(categoryValue);
+        return categoryStr === filterValue;
       },
     },
     {
@@ -264,7 +270,7 @@ const DashboardPage = () => {
   }
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-4">
         <Input
           placeholder="Filter by title..."
           value={(table.getColumn("title")?.getFilterValue() as string) ?? ""}
@@ -273,6 +279,50 @@ const DashboardPage = () => {
           }
           className="max-w-sm"
         />
+        
+        {/* Horizontal Category Carousel */}
+        <div className="flex-1 overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <style>{`
+            div::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
+          <div className="flex items-center gap-2 min-w-max px-2">
+            {isLoadingCategories ? (
+              <span className="text-muted-foreground text-sm">Loading categories...</span>
+            ) : categoriesList && categoriesList.length > 0 ? (
+              categoriesList.map((category, index) => {
+                const isSelected = selectedCategory === category;
+                return (
+                  <span
+                    key={`${category}-${index}`}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap cursor-pointer transition-all capitalize
+                      ${isSelected 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                      }`}
+                    onClick={() => {
+                      if (isSelected) {
+                        // Deselect if clicking the same category
+                        setSelectedCategory(null);
+                        table.getColumn("category")?.setFilterValue(null);
+                      } else {
+                        // Select new category
+                        setSelectedCategory(category);
+                        table.getColumn("category")?.setFilterValue(category);
+                      }
+                    }}
+                  >
+                    <span>{category}</span>
+                  </span>
+                );
+              })
+            ) : (
+              <span className="text-muted-foreground text-sm">No categories found</span>
+            )}
+          </div>
+        </div>
+        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
