@@ -1,73 +1,112 @@
-# React + TypeScript + Vite
+# Project Management Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<div align="center" >
+<img src="./src/assets/project-screen.png" alt="Logo" width="500" height="300" >
+</div>
 
-Currently, two official plugins are available:
+## Project Description
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This is a single-page application (SPA) that allows users to:
 
-## React Compiler
+- **Authenticate** - Simple login system (any email/password combination works for demo purposes)
+- **View Products** - Browse products in a responsive, sortable table with pagination
+- **Search & Filter** - Search products by title and filter by category
+- **Edit Products** - Update product details (title, price, description, category) through a modal interface
+- **Customize View** - Toggle column visibility to customize your table view
+- **Responsive Design** - Modern UI built with Tailwind CSS that works on all screen sizes
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Tech Stack
 
-## Expanding the ESLint configuration
+- **React 19** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool and dev server
+- **React Router** - Client-side routing
+- **TanStack Table** - Powerful data table with sorting, filtering, and pagination
+- **Tailwind CSS** - Utility-first CSS framework
+- **Axios** - HTTP client for API requests
+- **FakeStore API** - Product data source
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Getting Started
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+Make sure you have the following installed on your system:
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- **Node.js** (version 16 or higher)
+- **npm** (comes with Node.js) or **yarn**
+
+### Installation Steps
+1. Clone the repo 
+```sh
+git clone https://github.com/SalmaaOsamaa/project-managment-dashboard.git
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. install dependenscies
+ ```bash
+  npm i 
+  ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+3. **Start the development server**
+   ```bash
+   npm run dev
+   ```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+4. **Open your browser**
+   
+   Navigate to the URL shown in your terminal (typically `http://localhost:5173`)
+
+### Available Scripts
+
+- `npm run dev` - Start the development server with hot module replacement (HMR)
+- `npm run build` - Build the application for production
+- `npm run preview` - Preview the production build locally
+- `npm run lint` - Run ESLint to check code quality
+
+## Usage
+
+### Authentication
+
+1. Navigate to the login page (homepage)
+2. Enter any email address and password (no real authentication required for this demo)
+3. Click "Sign In" to access the dashboard
+
+### Dashboard Features
+
+- **Search Products**: Use the search input to filter products by title
+- **Filter by Category**: Click on category chips to filter products by category
+- **Sort Columns**: Click on column headers (Title, Price) to sort ascending/descending
+- **Edit Product**: Click the three-dot menu (⋮) on any row and select "Edit"
+- **Customize Columns**: Click the "Columns" button to show/hide table columns
+- **Navigate Pages**: Use the "Previous" and "Next" buttons to navigate through paginated results
+
+## Project Structure
+
 ```
+src/
+├── components/          # Reusable UI components
+│   ├── ui/             # UI primitives (Button, Input, Table, etc.)
+│   ├── Header.tsx      # Page header component
+│   └── Navbar.tsx      # Navigation bar
+├── pages/              # Page components
+│   ├── Auth/          # Authentication page
+│   └── Dashboard/     # Dashboard page with product management
+├── router/             # Routing configuration
+├── network/            # API service layer
+├── domain-models/      # TypeScript type definitions
+├── utils/              # Utility functions
+└── layouts/            # Layout components
+```
+
+## Build for Production
+
+To create an optimized production build:
+
+```bash
+npm run build
+```
+
+The built files will be in the `dist/` directory, ready to be deployed to any static hosting service.
+
+## License
+
+This project is open source and available for personal and commercial use.
