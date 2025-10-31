@@ -72,8 +72,27 @@ const DashboardPage = () => {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   )
+  
+  // Initialize column visibility from localStorage
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>(() => {
+      try {
+        const saved = localStorage.getItem('dashboard-column-visibility')
+        return saved ? JSON.parse(saved) : {}
+      } catch {
+        return {}
+      }
+    })
+  
+  // Persist column visibility to localStorage whenever it changes
+  React.useEffect(() => {
+    try {
+      localStorage.setItem('dashboard-column-visibility', JSON.stringify(columnVisibility))
+    } catch (error) {
+      console.error('Failed to save column visibility to localStorage:', error)
+    }
+  }, [columnVisibility])
+  
   const [rowSelection, setRowSelection] = React.useState({})
   const [isOpen, setIsOpen] = React.useState(false)
   const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null)
