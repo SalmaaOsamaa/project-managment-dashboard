@@ -6,7 +6,7 @@ import {
 } from 'react-router-dom'
 import ROUTES from './routes'
 import { lazy } from 'react'
-import ProtectedRoute from '../components/ProtectedRoute'
+import ProtectedRoute from './ProtectedRoute'
 
 const AppRouter = () => {
     const ErrorLayoutPage = lazy(() => import('../layouts/ErrorLayout/ErrorLayout'))

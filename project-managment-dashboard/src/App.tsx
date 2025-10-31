@@ -4,7 +4,7 @@ import AuthPage from './pages/Auth/AuthPage'
 import DashboardPage from './pages/Dashboard/DashboardPage'
 import ROUTES from './router/routes'
 import ErrorLayoutPage from './layouts/ErrorLayout/ErrorLayout'
-import ProtectedRoute from './components/ProtectedRoute'
+import ProtectedRoute from './router/ProtectedRoute'
 
 function App() {
   return (

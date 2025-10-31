@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom';
-import ROUTES from '../router/routes';
+import ROUTES from './routes';
 import { isAuthenticated } from '../utils/auth';
 
 interface ProtectedRouteProps {

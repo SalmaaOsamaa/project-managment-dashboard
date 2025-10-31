@@ -444,8 +444,8 @@ const DashboardPage = () => {
       </div>
       <div className="flex justify-between items-center py-4">
         <div className="text-muted-foreground px-2 text-sm">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {pageSize * pageIndex + pageSize} of{" "}
+          {productsList?.length} row(s) selected.
         </div>
         <div className="flex items-center gap-3 px-2">
           <Button
